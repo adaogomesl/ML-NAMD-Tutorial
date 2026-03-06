@@ -37,8 +37,8 @@ hydra:
     dir: ./${run_name}/${run_id}
 
 # === data params (fixed) ===
-chemical_symbols: ['H', 'C', 'N']
-model_type_names: ${chemical_symbols}
+model_type_names: [H, C, N]
+chemical_species_to_atom_type_map: ${list_to_identity_dict:[H, C, N]}
 data_transforms:
   - _target_: nequip.data.transforms.NeighborListTransform
     r_max: ${cutoff_radius}
