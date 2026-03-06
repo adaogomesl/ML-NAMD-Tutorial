@@ -1,6 +1,0 @@
-      title      dbh
-      mode       read
-      read_index conserved
-      save_traj  1
-      cpus       20
-      maxstep    2000
