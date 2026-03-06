@@ -1,0 +1,7 @@
+      title      dbh
+      mode       plot 
+      read_index conserved
+      save_traj  1 
+      param      B 3 4 B 3 6 B 4 7 B 6 7 D 15 2 3 5 D 14 1 4 5 D 4 1 2 3
+      cpus       20
+

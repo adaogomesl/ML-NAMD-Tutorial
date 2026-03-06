@@ -1,0 +1,6 @@
+      title       dbh
+      mode        pop
+      read_index  conserved
+      save_traj   1
+      save_data   0
+      cpus        20
