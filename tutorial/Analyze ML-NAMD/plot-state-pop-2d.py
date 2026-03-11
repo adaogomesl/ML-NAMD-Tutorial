@@ -76,13 +76,13 @@ ax.plot(x,p2,marker='o',markersize=0.,linewidth=2.0,alpha=1.0,color='red')
 #Print the half lives for the different states
 for n, p in enumerate(p1): #print the half life for the ground state
     if p>= 0.5:
-        print(n) 
+        print("Half-life: "+str(n/2)) 
         break
 for n, p in enumerate(p2): #print the half life for the first excited state
     if p<= 0.5:
-        print(n)
+        #print(n)
         break
-#plt.show()
+plt.show()
 fig.savefig("dbh-unsub-pop.png" ,bbox_inches="tight",dpi=400)
 s0=np.max(y1)
 s1=np.max(y2)
