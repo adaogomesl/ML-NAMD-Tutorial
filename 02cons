@@ -1,6 +1,0 @@
-      title      dbh
-      mode       cons
-      read_index complete 
-      maxdrift   0.06
-      cpus       20
-      minstep    2000
