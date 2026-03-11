@@ -1,6 +1,6 @@
       title      dbh
       mode       diagnosis
-      read_index 1-500
+      read_index 100-150
       cpus       20
       minstep    2000
  
