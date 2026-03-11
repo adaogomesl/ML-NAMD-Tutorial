@@ -60,6 +60,7 @@ plt.yticks(fontsize=15, weight='bold')
 ax.set_xlabel(r'C-N (Å)',color='blue',fontsize=14,labelpad=8)
 ax.set_ylabel(r'C-N (Å)',color='green',fontsize=14,labelpad=8)
 plt.savefig('DBH-CN-CN.png',dpi=1200,bbox_inches='tight')
+plt.show()
 
 
 #CC-Dihedral 
