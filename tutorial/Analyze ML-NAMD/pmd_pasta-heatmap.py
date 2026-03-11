@@ -1,4 +1,4 @@
-import json
+pimport jsonrin
 import io
 import os
 import matplotlib.pyplot as plt 
@@ -13,7 +13,7 @@ from scipy.stats import gaussian_kde
 
 with open('plot-dbh.json','r') as indata:
 	data = json.load(indata)
-	print(data.keys())
+	#print(data.keys())
 
 #print(data['hop'][0])
 def pmd_spaghetti_plt(cutoff,meas_1,meas_2,ax,para,hop):
@@ -36,7 +36,7 @@ def pmd_spaghetti_plt(cutoff,meas_1,meas_2,ax,para,hop):
 			j = hop[k][n]
 			j = j - 1
 			if j < cutoff:
-				print(para[k][j]) 
+				#print(para[k][j]) 
 				x2.append(para[k][j][meas_1])
 				y2.append(para[k][j][meas_2])
 			else:
