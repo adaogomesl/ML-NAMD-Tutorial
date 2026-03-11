@@ -1,0 +1,5352 @@
+Nonadiabatic Molecular Dynamics Start:  2026-02-25 10:47:36
+
+
+  -------------------------------------------------------------------
+                              /\
+   |\    /|                  /++\
+   ||\  /||                 /++++\
+   || \/ || ||             /++++++\
+   ||    || ||            /PyRAI2MD\
+   ||    || ||           /++++++++++\                    __
+            ||          /++++++++++++\    |\ |  /\  |\/| | \
+            ||__ __    *==============*   | \| /--\ |  | |_/
+
+                          Python Rapid
+                     Artificial Intelligence
+                  Ab Initio Molecular Dynamics
+
+
+
+                      Author @Jingbai Li
+                      
+                      
+    2022 – present   Hoffmann Institute of Advanced Materials
+                     Shenzhen Polytechnic, Shenzhen, China    
+                                
+    2019 – 2022      Department of Chemistry and Chemical Biology
+                     Northeastern University, Boston, USA
+
+                          version:   2.5.1
+
+  With contributions from (in alphabetic order):
+    Jingbai Li     - Fewest switches surface hopping
+                     Zhu-Nakamura surface hopping
+                     Velocity Verlet
+                     OpenMolcas interface
+                     OpenMolcas/Tinker interface
+                     BAGEL interface
+                     ORCA interface
+                     OpenQP interface
+                     GFN-xTB interface
+                     Adaptive sampling
+                     Grid search
+                     Multilayer ONIOM (QM:QM' and QM:QM':MM)
+                     Periodic boundary condition
+                     Wall potential
+                     QC/ML hybrid NAMD
+                     Excited-State Neural Network Potentials (ESNNP)
+
+    Patrick Reiser - Fully connected neural networks (pyNNsMD)
+                     SchNet (pyNNsMD)
+
+  Special acknowledgement to:
+    Steven A. Lopez            - Project co-founder
+    Pascal Friederich          - Project co-founder
+
+
+
+
+  &control
+-------------------------------------------------------
+  Title:                      dbh-100   
+  NPROCS for ML:              1         
+  NPROCS for QC:              1         
+  NPROCS for Multiscale:      1          
+  Seed:                       1         
+  Job: 	                      md        
+  QM:          	       	      nequip    
+  Ab initio:                  molcas    
+-------------------------------------------------------
+
+        
+  &molecule
+-------------------------------------------------------
+  States:                     [2]       
+  Spin:                       [0]       
+  Interstates:                [[1, 2]]  
+  QMMM keyfile:               None      
+  QMMM xyzfile:               Input     
+  High level region:          []         ...
+  Middel level region:        []         ...
+  Boundary:                   []         ...
+  Embedding charges:          False     
+  Reading charge:             False     
+  Frozen atoms:               []        
+  Constrained atoms:          []        
+  Restrained bonds:           []        
+  Restrained angles:          []        
+  Restrained dihedrals:       []        
+  Restrained bond value:      []        
+  Restrained angle value:     []        
+  Restrained dihedral value:  []        
+  Bond potential scale:       10.0      
+  Angle potential scale:      0.005     
+  Dihedral potential scale:   1e-06     
+  External potential shape:   ['ellipsoid']
+  External potential radius:  []        
+  External potential factor:  [40]      
+  External potential scale:   [1.0]       
+  Compress potential volume:  []        
+  Potential center:           []        
+  Potential center type:      xyz       
+  Constrained groups          []        
+  Track geometry type:        None      
+  Track indices:              []        
+  Track threshold:            []        
+  Track stop task:            0         
+  Lattice vectors:            []        
+  Lattice constant:           []        
+  Periodic boundary condition []        
+-------------------------------------------------------
+
+        
+  &initial condition
+-------------------------------------------------------
+  Generate initial condition: 0         
+  Number:                     5000      
+  Method:                     wigner     
+  Format:                     molden    
+-------------------------------------------------------
+
+        
+  &md
+-------------------------------------------------------
+  Initial state:              2         
+  Initialize random velocity  0         
+  Temperature (K):            300       
+  Step:                       2000      
+  Dt (au):                    20.67     
+  Only active state grad      0         
+  Surface hopping:            fssh      
+  NAC type:                   nac       
+  Phase correction            1         
+  Population reset            0         
+  Substep:                    20        
+  Integrate probability       0         
+  Decoherence:                0.1       
+  Adjust velocity:            2         
+  Reflect velocity:           1         
+  Maxhop:                     10        
+  IC hopping gap threshold    0.5       
+  ISC hopping gap threshold   0.5       
+  Thermodynamic:              off       
+  Thermodynamic delay:        200       
+  Print level:                0         
+  Direct output:              2000      
+  Buffer output:              0         
+  Record MD data:             1         
+  Record MD steps:            0         
+  Checkpoint steps:           1          
+  Restart function:           0         
+  Additional steps:           0         
+-------------------------------------------------------
+
+        
+  &md velocity control
+-------------------------------------------------------
+  Excess kinetic energy       0         
+  Scale kinetic energy        1         
+  Target kinetic energy       0         
+  Gradient descent path       0         
+  Reset velocity:             0         
+  Reset step:                 0         
+-------------------------------------------------------
+
+        
+  &nequip
+-------------------------------------------------------
+  Train data:                 None      
+  Prediction data:            None      
+  Train mode:                 training  
+  Silent mode:                1         
+  Data splits:                10        
+  NN EG type:                 1         
+  NN NAC type:                0         
+  NN SOC type:                0         
+  Multiscale:                 []        
+  Shuffle data:               False     
+  EG unit:                    si        
+  NAC unit:                   si        
+  SOC unit:                   cm-1
+  Select EG output:           []        
+  Select NAC output:          []        
+  Select SOC output:          []          
+  Data permutation            No        
+  Elements                              
+-------------------------------------------------------
+
+        
+
+  NequIP-NAC (Energy + Gradient + NAC)
+
+  &hyperparameters            Energy+Gradient      Nonadiabatic         Spin-orbit
+----------------------------------------------------------------------------------------------
+  Model type:                 NequIPeg            NequIPnac           n/a          
+  Model path:                 dbh-100.nequip.pth   dbh-100.nequip.pth   n/a                 
+  GPU:                        1                    1                    n/a                 
+  Chemical symbols:           auto                 auto                 n/a                 
+----------------------------------------------------------------------------------------------
+        
+
+
+ *---------------------------------------------------*
+ |                                                   |
+ |          Nonadiabatic Molecular Dynamics          |
+ |                                                   |
+ *---------------------------------------------------*
+
+
+  State order:         1   2
+  Multiplicity:        1   1
+
+  QMMM key:         None
+  QMMM xyz          Input
+  Active atoms:     15
+  Inactive atoms:   0
+  Link atoms:       0
+  Highlevel atoms:  15
+  Midlevel atoms:   0
+  Lowlevel atoms:   0
+  
+  Lattice vector:   None
+  Periodic X/Y/Z:   None
+
+  Iter:        1  Ekin =           0.0502804490863489 au T =   705.66 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000000000000           1.0000000000000000        -302.9158367932482179        -302.7605485422815264        -302.7605485422815264
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+  No surface hopping is performed
+-------------------------------------------------------
+
+  
+  &error iter 1         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        2  Ekin =           0.0490134365660853 au T =   687.88 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000000000000           1.0000000000000000        -302.9150857165465140        -302.7594320306151872        -302.7594320306151872
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+  No surface hopping is performed
+-------------------------------------------------------
+
+  
+  &error iter 2         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        3  Ekin =           0.0517051623036096 au T =   725.65 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000000000000           1.0000000000000000        -302.9179813354762700        -302.7623026890165079        -302.7623026890165079
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+  No surface hopping is performed
+-------------------------------------------------------
+
+  
+  &error iter 3         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        4  Ekin =           0.0556639202198945 au T =   781.21 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000084963384076           0.9999915036614766        -302.9220547152785343        -302.7663220258527872        -302.7663220258527872
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.53182757
+    Accumulated probability:   0.00000087
+    state mult  level   probability 
+    1     1     1       0.00000087
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 4         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        5  Ekin =           0.0595735136682735 au T =   836.08 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000038522415036           0.9999961477583383        -302.9262061380723594        -302.7701954833755167        -302.7701954833755167
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.50183666
+    Accumulated probability:   0.00000067
+    state mult  level   probability 
+    1     1     1       0.00000067
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 5         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        6  Ekin =           0.0634106091069973 au T =   889.93 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000060529727896           0.9999939470271784        -302.9303418743950829        -302.7740103072665079        -302.7740103072665079
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.51042235
+    Accumulated probability:   0.00000084
+    state mult  level   probability 
+    1     1     1       0.00000084
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 6         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        7  Ekin =           0.0672016794683343 au T =   943.14 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000055698102450           0.9999944301898722        -302.9342958938360084        -302.7778455322150535        -302.7778455322150535
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.69552952
+    Accumulated probability:   0.00000087
+    state mult  level   probability 
+    1     1     1       0.00000087
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 7         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        8  Ekin =           0.0702049008578522 au T =   985.29 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000058833296746           0.9999941166702229        -302.9372658946706451        -302.7809581406497159        -302.7809581406497159
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.34345600
+    Accumulated probability:   0.00000090
+    state mult  level   probability 
+    1     1     1       0.00000090
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 8         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:        9  Ekin =           0.0709258635035713 au T =   995.41 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000055893258285           0.9999944106743897        -302.9378910660585120        -302.7818033775580489        -302.7818033775580489
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.98834544
+    Accumulated probability:   0.00000084
+    state mult  level   probability 
+    1     1     1       0.00000084
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 9         
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       10  Ekin =           0.0679072019860275 au T =   953.04 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000051587364006           0.9999948412637423        -302.9348932546039350        -302.7788234614259864        -302.7788234614259864
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.54776359
+    Accumulated probability:   0.00000072
+    state mult  level   probability 
+    1     1     1       0.00000072
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 10        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       11  Ekin =           0.0611338705704530 au T =   857.98 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000045889982134           0.9999954110016915        -302.9281272066606334        -302.7719075042537042        -302.7719075042537042
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.44032788
+    Accumulated probability:   0.00000058
+    state mult  level   probability 
+    1     1     1       0.00000058
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 11        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       12  Ekin =           0.0531773034955496 au T =   746.31 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000040631837630           0.9999959368160489        -302.9198458174812458        -302.7636478401080353        -302.7636478401080353
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.42430687
+    Accumulated probability:   0.00000046
+    state mult  level   probability 
+    1     1     1       0.00000046
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 12        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       13  Ekin =           0.0485434432885854 au T =   681.28 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000036372571116           0.9999963627428770        -302.9147554918836818        -302.7587653936545280        -302.7587653936545280
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.12175436
+    Accumulated probability:   0.00000040
+    state mult  level   probability 
+    1     1     1       0.00000040
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 13        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       14  Ekin =           0.0508852566476294 au T =   714.15 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000031822461967           0.9999968177537539        -302.9172160157795020        -302.7610985357404161        -302.7610985357404161
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.18690374
+    Accumulated probability:   0.00000037
+    state mult  level   probability 
+    1     1     1       0.00000037
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 14        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       15  Ekin =           0.0603459956396938 au T =   846.92 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000025164201584           0.9999974835798184        -302.9276449399935700        -302.7708163247458515        -302.7708163247458515
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.62630934
+    Accumulated probability:   0.00000032
+    state mult  level   probability 
+    1     1     1       0.00000032
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 15        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       16  Ekin =           0.0731172530080187 au T =  1026.16 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000017358576085           0.9999982641423912        -302.9416685062726060        -302.7839852085903658        -302.7839852085903658
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.26690581
+    Accumulated probability:   0.00000024
+    state mult  level   probability 
+    1     1     1       0.00000024
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 16        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       17  Ekin =           0.0833824041862871 au T =  1170.23 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000010122739097           0.9999989877261442        -302.9527560350257431        -302.7945569793109826        -302.7945569793109826
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.02619660
+    Accumulated probability:   0.00000014
+    state mult  level   probability 
+    1     1     1       0.00000014
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 17        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       18  Ekin =           0.0866844516327755 au T =  1216.57 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000004920926590           0.9999995079073187        -302.9565684306384128        -302.7978816633299175        -302.7978816633299175
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.59648693
+    Accumulated probability:   0.00000006
+    state mult  level   probability 
+    1     1     1       0.00000006
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 18        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       19  Ekin =           0.0820118717325040 au T =  1150.99 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000001824910703           0.9999998175089360        -302.9525688033427286        -302.7931025718397677        -302.7931025718397677
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.50056142
+    Accumulated probability:   0.00000002
+    state mult  level   probability 
+    1     1     1       0.00000002
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 19        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       20  Ekin =           0.0709054146060649 au T =   995.12 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000358974641           0.9999999641025354        -302.9421916983505980        -302.7818043268533188        -302.7818043268533188
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.24221981
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 20        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       21  Ekin =           0.0565890434398939 au T =   794.20 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000016061593           0.9999999983938407        -302.9284109154580733        -302.7671773890209579        -302.7671773890209579
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.36418745
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 21        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       22  Ekin =           0.0437046737729901 au T =   613.37 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000013278402           0.9999999986721598        -302.9157969247966662        -302.7539890370618991        -302.7539890370618991
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.23747823
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 22        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       23  Ekin =           0.0367250321708600 au T =   515.42 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000140520956           0.9999999859479045        -302.9089084853558802        -302.7468652277373167        -302.7468652277373167
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.84575248
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 23        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       24  Ekin =           0.0377392552143806 au T =   529.65 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000973069834           0.9999999026930197        -302.9098768096729941        -302.7479739173481903        -302.7479739173481903
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.86335337
+    Accumulated probability:   0.00000002
+    state mult  level   probability 
+    1     1     1       0.00000002
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 24        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       25  Ekin =           0.0453929191457934 au T =   637.06 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000003201890177           0.9999996798109692        -302.9172284367756447        -302.7558748458502578        -302.7558748458502578
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.44169739
+    Accumulated probability:   0.00000006
+    state mult  level   probability 
+    1     1     1       0.00000006
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 25        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       26  Ekin =           0.0561343369460717 au T =   787.81 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000006565649139           0.9999993434350927        -302.9274464564672940        -302.7668123267052351        -302.7668123267052351
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.92455190
+    Accumulated probability:   0.00000011
+    state mult  level   probability 
+    1     1     1       0.00000011
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 26        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       27  Ekin =           0.0666981946057557 au T =   936.07 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000010792915874           0.9999989207084354        -302.9374468191456913        -302.7774752560231377        -302.7774752560231377
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.23008996
+    Accumulated probability:   0.00000020
+    state mult  level   probability 
+    1     1     1       0.00000020
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 27        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       28  Ekin =           0.0750419442037912 au T =  1053.17 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000015264554668           0.9999984735445651        -302.9452275386010456        -302.7859012553372509        -302.7859012553372509
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.74461544
+    Accumulated probability:   0.00000028
+    state mult  level   probability 
+    1     1     1       0.00000028
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 28        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       29  Ekin =           0.0796633619361992 au T =  1118.03 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000018686698951           0.9999981313301305        -302.9492705644194075        -302.7906142064181267        -302.7906142064181267
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.47777805
+    Accumulated probability:   0.00000033
+    state mult  level   probability 
+    1     1     1       0.00000033
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 29        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       30  Ekin =           0.0792938300057710 au T =  1112.85 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000020106444095           0.9999979893555064        -302.9483985265206343        -302.7902907385978324        -302.7902907385978324
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.67112660
+    Accumulated probability:   0.00000034
+    state mult  level   probability 
+    1     1     1       0.00000034
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 30        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       31  Ekin =           0.0735474439446967 au T =  1032.20 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000019170052095           0.9999980829948072        -302.9422061477075090        -302.7844788081008005        -302.7844788081008005
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.24862377
+    Accumulated probability:   0.00000029
+    state mult  level   probability 
+    1     1     1       0.00000029
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 31        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       32  Ekin =           0.0638220807415677 au T =   895.71 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000018370698828           0.9999981629300692        -302.9318781650800361        -302.7745438119955566        -302.7745438119955566
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.95631200
+    Accumulated probability:   0.00000025
+    state mult  level   probability 
+    1     1     1       0.00000025
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 32        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       33  Ekin =           0.0536258743851848 au T =   752.61 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000021691728534           0.9999978308271693        -302.9208140104274776        -302.7640393863057966        -302.7640393863057966
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.03191799
+    Accumulated probability:   0.00000029
+    state mult  level   probability 
+    1     1     1       0.00000029
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 33        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       34  Ekin =           0.0476673295718438 au T =   668.98 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000030353354729           0.9999969646644331        -302.9139444433519657        -302.7578389811724833        -302.7578389811724833
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.16200083
+    Accumulated probability:   0.00000040
+    state mult  level   probability 
+    1     1     1       0.00000040
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 34        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       35  Ekin =           0.0493562973392652 au T =   692.69 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000039914577682           0.9999960085424391        -302.9150080080881366        -302.7595552736222544        -302.7595552736222544
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.19600947
+    Accumulated probability:   0.00000053
+    state mult  level   probability 
+    1     1     1       0.00000053
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 35        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       36  Ekin =           0.0583005493310980 au T =   818.22 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000045221527633           0.9999954778472784        -302.9234638597964135        -302.7687917574879179        -302.7687917574879179
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.81031483
+    Accumulated probability:   0.00000065
+    state mult  level   probability 
+    1     1     1       0.00000065
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 36        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       37  Ekin =           0.0702752118173330 au T =   986.27 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000047700323491           0.9999952299676806        -302.9348389753005790        -302.7811424645062743        -302.7811424645062743
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.44046199
+    Accumulated probability:   0.00000075
+    state mult  level   probability 
+    1     1     1       0.00000075
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 37        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       38  Ekin =           0.0798230565192809 au T =  1120.27 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000050089596014           0.9999949910402393        -302.9437956121428215        -302.7909026457029427        -302.7909026457029427
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.84750229
+    Accumulated probability:   0.00000084
+    state mult  level   probability 
+    1     1     1       0.00000084
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 38        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       39  Ekin =           0.0834646418266218 au T =  1171.38 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000050681455083           0.9999949318544168        -302.9470109793784900        -302.7945383449286965        -302.7945383449286965
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.02734078
+    Accumulated probability:   0.00000084
+    state mult  level   probability 
+    1     1     1       0.00000084
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 39        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       40  Ekin =           0.0805626036701707 au T =  1130.65 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000048080319248           0.9999951919680825        -302.9437685867285950        -302.7915773623540758        -302.7915773623540758
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.52388066
+    Accumulated probability:   0.00000075
+    state mult  level   probability 
+    1     1     1       0.00000075
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 40        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       41  Ekin =           0.0719253563292187 au T =  1009.43 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000041459051975           0.9999958540947773        -302.9348946529611339        -302.7828523220169359        -302.7828523220169359
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.83538866
+    Accumulated probability:   0.00000055
+    state mult  level   probability 
+    1     1     1       0.00000055
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 41        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       42  Ekin =           0.0592272989311604 au T =   831.22 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000029771488455           0.9999970228511756        -302.9221674687051973        -302.7699698712260101        -302.7699698712260101
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.83534312
+    Accumulated probability:   0.00000029
+    state mult  level   probability 
+    1     1     1       0.00000029
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 42        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       43  Ekin =           0.0456072600157286 au T =   640.07 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000016988563425           0.9999983011437052        -302.9085631432380410        -302.7560560766139588        -302.7560560766139588
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.31050873
+    Accumulated probability:   0.00000010
+    state mult  level   probability 
+    1     1     1       0.00000010
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 43        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       44  Ekin =           0.0355445109471606 au T =   498.85 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000008585709306           0.9999991414290434        -302.8983570908596334        -302.7457287545273630        -302.7457287545273630
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.36726555
+    Accumulated probability:   0.00000004
+    state mult  level   probability 
+    1     1     1       0.00000004
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 44        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       45  Ekin =           0.0328777615343435 au T =   461.42 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000004369930176           0.9999995630069805        -302.8954183022307802        -302.7430114265160910        -302.7430114265160910
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.49291372
+    Accumulated probability:   0.00000002
+    state mult  level   probability 
+    1     1     1       0.00000002
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 45        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       46  Ekin =           0.0383679011958734 au T =   538.47 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000001545457493           0.9999998454542549        -302.9005820033984264        -302.7486872860914673        -302.7486872860914673
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.87132633
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 46        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       47  Ekin =           0.0493330387232897 au T =   692.36 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000119400338           0.9999999880599661        -302.9110720265690588        -302.7599328544998798        -302.7599328544998798
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.75112122
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 47        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       48  Ekin =           0.0616063603627675 au T =   864.61 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000001056279407           0.9999998943720598        -302.9227082505354360        -302.7724093400813672        -302.7724093400813672
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.06073962
+    Accumulated probability:   0.00000003
+    state mult  level   probability 
+    1     1     1       0.00000003
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 48        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       49  Ekin =           0.0718805167821700 au T =  1008.80 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000004089931102           0.9999995910068833        -302.9322667156657189        -302.7827604436541833        -302.7827604436541833
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.49868822
+    Accumulated probability:   0.00000008
+    state mult  level   probability 
+    1     1     1       0.00000008
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 49        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       50  Ekin =           0.0783862740962509 au T =  1100.11 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000009934916671           0.9999990065083466        -302.9379216210596155        -302.7893283571876282        -302.7893283571876282
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.16322003
+    Accumulated probability:   0.00000020
+    state mult  level   probability 
+    1     1     1       0.00000020
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 50        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       51  Ekin =           0.0800260696768434 au T =  1123.12 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000019825471997           0.9999980174527536        -302.9385615381216326        -302.7910299316803844        -302.7910299316803844
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.63735676
+    Accumulated probability:   0.00000038
+    state mult  level   probability 
+    1     1     1       0.00000038
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 51        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       52  Ekin =           0.0763142943115489 au T =  1071.03 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000032555990548           0.9999967444009599        -302.9337057617082110        -302.7872536185456056        -302.7872536185456056
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.82653016
+    Accumulated probability:   0.00000056
+    state mult  level   probability 
+    1     1     1       0.00000056
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 52        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       53  Ekin =           0.0685073697000074 au T =   961.46 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000045432948852           0.9999954567051645        -302.9244738768244360        -302.7792374768004606        -302.7792374768004606
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.29489470
+    Accumulated probability:   0.00000068
+    state mult  level   probability 
+    1     1     1       0.00000068
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 53        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       54  Ekin =           0.0599766984974992 au T =   841.74 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000057274246218           0.9999942725753499        -302.9143344709234498        -302.7704130484294183        -302.7704130484294183
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.39012530
+    Accumulated probability:   0.00000075
+    state mult  level   probability 
+    1     1     1       0.00000075
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 54        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       55  Ekin =           0.0551803404360630 au T =   774.43 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000061823325633           0.9999938176674732        -302.9082296842116762        -302.7653976172243233        -302.7653976172243233
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.23563835
+    Accumulated probability:   0.00000071
+    state mult  level   probability 
+    1     1     1       0.00000071
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 55        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       56  Ekin =           0.0571650419062862 au T =   802.28 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000051415079502           0.9999948584918457        -302.9095572805557026        -302.7674478498648796        -302.7674478498648796
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.38442123
+    Accumulated probability:   0.00000054
+    state mult  level   probability 
+    1     1     1       0.00000054
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 56        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       57  Ekin =           0.0650539342884761 au T =   913.00 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000035040782245           0.9999964959217778        -302.9173511837414026        -302.7756368186889517        -302.7756368186889517
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.86853385
+    Accumulated probability:   0.00000039
+    state mult  level   probability 
+    1     1     1       0.00000039
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 57        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       58  Ekin =           0.0746750071297740 au T =  1048.02 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000023083606482           0.9999976916394644        -302.9270471887962799        -302.7855399067031499        -302.7855399067031499
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.26602650
+    Accumulated probability:   0.00000028
+    state mult  level   probability 
+    1     1     1       0.00000028
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 58        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       59  Ekin =           0.0816934587860865 au T =  1146.52 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000016963048377           0.9999983036951789        -302.9340955377891760        -302.7926915436000286        -302.7926915436000286
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.39126256
+    Accumulated probability:   0.00000023
+    state mult  level   probability 
+    1     1     1       0.00000023
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 59        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       60  Ekin =           0.0837751340492040 au T =  1175.74 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000014815326665           0.9999985184673506        -302.9362773232243171        -302.7947605363180514        -302.7947605363180514
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.86737633
+    Accumulated probability:   0.00000022
+    state mult  level   probability 
+    1     1     1       0.00000022
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 60        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       61  Ekin =           0.0806926227246262 au T =  1132.48 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000013397050777           0.9999986602949775        -302.9335809784870435        -302.7915977614880489        -302.7915977614880489
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.87273532
+    Accumulated probability:   0.00000019
+    state mult  level   probability 
+    1     1     1       0.00000019
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 61        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       62  Ekin =           0.0734642655204859 au T =  1031.03 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000010925253417           0.9999989074746054        -302.9270193207581769        -302.7842646862269476        -302.7842646862269476
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.11751797
+    Accumulated probability:   0.00000013
+    state mult  level   probability 
+    1     1     1       0.00000013
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 62        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       63  Ekin =           0.0635918597651138 au T =   892.48 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000008352555517           0.9999991647444517        -302.9178384047116879        -302.7742948457245120        -302.7742948457245120
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.19332297
+    Accumulated probability:   0.00000009
+    state mult  level   probability 
+    1     1     1       0.00000009
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 63        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       64  Ekin =           0.0527734088376361 au T =   740.65 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000007015080393           0.9999992984919572        -302.9073899863823272        -302.7633440677578278        -302.7633440677578278
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.74706012
+    Accumulated probability:   0.00000007
+    state mult  level   probability 
+    1     1     1       0.00000007
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 64        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       65  Ekin =           0.0433269873817900 au T =   608.07 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000006584604201           0.9999993415395920        -302.8977431325474754        -302.7536874453418250        -302.7536874453418250
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.24655974
+    Accumulated probability:   0.00000006
+    state mult  level   probability 
+    1     1     1       0.00000006
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 65        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       66  Ekin =           0.0383927716659555 au T =   538.82 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000005092671961           0.9999994907328187        -302.8920473411653234        -302.7485661612476520        -302.7485661612476520
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.21946178
+    Accumulated probability:   0.00000003
+    state mult  level   probability 
+    1     1     1       0.00000003
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 66        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       67  Ekin =           0.0405488720299425 au T =   569.08 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000002315506810           0.9999997684493138        -302.8930813620340814        -302.7507189390559006        -302.7507189390559006
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.99920124
+    Accumulated probability:   0.00000001
+    state mult  level   probability 
+    1     1     1       0.00000001
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 67        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       68  Ekin =           0.0497589109251718 au T =   698.34 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000337010527           0.9999999662989474        -302.9009575214654433        -302.7601492164033630        -302.7601492164033630
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.73272729
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 68        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       69  Ekin =           0.0628601167840005 au T =   882.21 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000700322646           0.9999999299677356        -302.9124981375747439        -302.7735739179923371        -302.7735739179923371
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.93929583
+    Accumulated probability:   0.00000002
+    state mult  level   probability 
+    1     1     1       0.00000002
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 69        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       70  Ekin =           0.0752014525988960 au T =  1055.41 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000005117662351           0.9999994882337546        -302.9230173661135268        -302.7861709954432854        -302.7861709954432854
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.88738877
+    Accumulated probability:   0.00000011
+    state mult  level   probability 
+    1     1     1       0.00000011
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 70        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       71  Ekin =           0.0828867818012479 au T =  1163.27 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000014021654815           0.9999985978345194        -302.9288025545506002        -302.7939887576945353        -302.7939887576945353
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.21293491
+    Accumulated probability:   0.00000027
+    state mult  level   probability 
+    1     1     1       0.00000027
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 71        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       72  Ekin =           0.0839001238357864 au T =  1177.49 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000026994331410           0.9999973005667471        -302.9282327191717741        -302.7950121811749113        -302.7950121811749113
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.67282635
+    Accumulated probability:   0.00000047
+    state mult  level   probability 
+    1     1     1       0.00000047
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 72        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       73  Ekin =           0.0785547992892593 au T =  1102.47 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000045081498438           0.9999954918503136        -302.9216073593163401        -302.7894798273360379        -302.7894798273360379
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.83268398
+    Accumulated probability:   0.00000072
+    state mult  level   probability 
+    1     1     1       0.00000072
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 73        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       74  Ekin =           0.0700135956403318 au T =   982.60 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000064815022742           0.9999935184978312        -302.9114849079810483        -302.7805972241343397        -302.7805972241343397
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.49990728
+    Accumulated probability:   0.00000089
+    state mult  level   probability 
+    1     1     1       0.00000089
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 74        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       75  Ekin =           0.0633806146645952 au T =   889.51 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000075669165819           0.9999924330832073        -302.9027175652408914        -302.7736838593891093        -302.7736838593891093
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.84607881
+    Accumulated probability:   0.00000088
+    state mult  level   probability 
+    1     1     1       0.00000088
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 75        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       76  Ekin =           0.0626994037597361 au T =   879.95 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000070044633560           0.9999929955365587        -302.9000183573371601        -302.7729908041618501        -302.7729908041618501
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.75662929
+    Accumulated probability:   0.00000073
+    state mult  level   probability 
+    1     1     1       0.00000073
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 76        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       77  Ekin =           0.0682419881945278 au T =   957.74 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000055397500601           0.9999944602500364        -302.9042456707974793        -302.7787605064774539        -302.7787605064774539
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.46523526
+    Accumulated probability:   0.00000058
+    state mult  level   probability 
+    1     1     1       0.00000058
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 77        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       78  Ekin =           0.0767652842485324 au T =  1077.36 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000045262302935           0.9999954737695589        -302.9119249883424914        -302.7875489064392696        -302.7875489064392696
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.35535973
+    Accumulated probability:   0.00000054
+    state mult  level   probability 
+    1     1     1       0.00000054
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 78        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       79  Ekin =           0.0841432834983000 au T =  1180.90 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000043582398047           0.9999956417600515        -302.9183460665149710        -302.7950842551919095        -302.7950842551919095
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.70245171
+    Accumulated probability:   0.00000059
+    state mult  level   probability 
+    1     1     1       0.00000059
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 79        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       80  Ekin =           0.0875909869872360 au T =  1229.29 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000050126852816           0.9999949873144942        -302.9205167235564318        -302.7985642829105473        -302.7985642829105473
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.25070140
+    Accumulated probability:   0.00000072
+    state mult  level   probability 
+    1     1     1       0.00000072
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 80        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       81  Ekin =           0.0861851145832164 au T =  1209.56 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000060609936814           0.9999939390063446        -302.9177221567808829        -302.7971119166331846        -302.7971119166331846
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.54562926
+    Accumulated probability:   0.00000084
+    state mult  level   probability 
+    1     1     1       0.00000084
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 81        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       82  Ekin =           0.0803092945554302 au T =  1127.10 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000065849769253           0.9999934150232548        -302.9106897225217949        -302.7911652978701795        -302.7911652978701795
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.70168769
+    Accumulated probability:   0.00000080
+    state mult  level   probability 
+    1     1     1       0.00000080
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 82        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       83  Ekin =           0.0709748597089132 au T =   996.09 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000062984200711           0.9999937015800242        -302.9006081768351351        -302.7817449015900593        -302.7817449015900593
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.63190949
+    Accumulated probability:   0.00000065
+    state mult  level   probability 
+    1     1     1       0.00000065
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 83        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       84  Ekin =           0.0596389848576415 au T =   837.00 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000053573040007           0.9999946426960378        -302.8887238209331372        -302.7702837852875746        -302.7702837852875746
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.73033530
+    Accumulated probability:   0.00000044
+    state mult  level   probability 
+    1     1     1       0.00000044
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 84        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       85  Ekin =           0.0484392865772937 au T =   679.82 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000038638244486           0.9999961361754686        -302.8768350985799884        -302.7589046497490131        -302.7589046497490131
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.84440124
+    Accumulated probability:   0.00000022
+    state mult  level   probability 
+    1     1     1       0.00000022
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 85        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       86  Ekin =           0.0402861648832772 au T =   565.39 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000023928156115           0.9999976071844685        -302.8677696222522968        -302.7505556931930641        -302.7505556931930641
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.39002615
+    Accumulated probability:   0.00000010
+    state mult  level   probability 
+    1     1     1       0.00000010
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 86        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       87  Ekin =           0.0380190614977677 au T =   533.58 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000014669787459           0.9999985330211985        -302.8644967789215343        -302.7482118549822303        -302.7482118549822303
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.01626831
+    Accumulated probability:   0.00000007
+    state mult  level   probability 
+    1     1     1       0.00000007
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 87        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       88  Ekin =           0.0427241111012440 au T =   599.61 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000009360327655           0.9999990639672092        -302.8682806847437519        -302.7530195020530641        -302.7530195020530641
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.64000803
+    Accumulated probability:   0.00000005
+    state mult  level   probability 
+    1     1     1       0.00000005
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 88        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       89  Ekin =           0.0528541225221230 au T =   741.78 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000006751335243           0.9999993248664509        -302.8777069563142845        -302.7633890503957446        -302.7633890503957446
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.53422678
+    Accumulated probability:   0.00000006
+    state mult  level   probability 
+    1     1     1       0.00000006
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 89        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       90  Ekin =           0.0647739060188812 au T =   909.07 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000007078411932           0.9999992921588046        -302.8892739837148724        -302.7756097068949543        -302.7756097068949543
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.67145264
+    Accumulated probability:   0.00000008
+    state mult  level   probability 
+    1     1     1       0.00000008
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 90        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       91  Ekin =           0.0740316111766625 au T =  1038.99 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000009124188313           0.9999990875811591        -302.8987596125041932        -302.7851243901286011        -302.7851243901286011
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.81923091
+    Accumulated probability:   0.00000012
+    state mult  level   probability 
+    1     1     1       0.00000012
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 91        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       92  Ekin =           0.0769865730287661 au T =  1080.46 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000012090533585           0.9999987909466199        -302.9025330578394914        -302.7881766039594140        -302.7881766039594140
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.29898053
+    Accumulated probability:   0.00000016
+    state mult  level   probability 
+    1     1     1       0.00000016
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 92        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       93  Ekin =           0.0723351346537490 au T =  1015.18 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000021610532650           0.9999978389466833        -302.8988786431513063        -302.7834252137779458        -302.7834252137779458
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.97442257
+    Accumulated probability:   0.00000032
+    state mult  level   probability 
+    1     1     1       0.00000032
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 93        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       94  Ekin =           0.0620690205652783 au T =   871.10 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000041753285363           0.9999958246712595        -302.8892056779421864        -302.7728068111539983        -302.7728068111539983
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.59168708
+    Accumulated probability:   0.00000053
+    state mult  level   probability 
+    1     1     1       0.00000053
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 94        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       95  Ekin =           0.0514835706962635 au T =   722.54 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000055882376392           0.9999944117621453        -302.8785361460794547        -302.7617968151247965        -302.7617968151247965
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.85587692
+    Accumulated probability:   0.00000050
+    state mult  level   probability 
+    1     1     1       0.00000050
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 95        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       96  Ekin =           0.0466635564341364 au T =   654.90 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000043198996719           0.9999956801002554        -302.8734099470770502        -302.7567671948773977        -302.7567671948773977
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.80709952
+    Accumulated probability:   0.00000023
+    state mult  level   probability 
+    1     1     1       0.00000023
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 96        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       97  Ekin =           0.0506575999994945 au T =   710.95 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000019098509304           0.9999980901491199        -302.8776552777648021        -302.7608924556209331        -302.7608924556209331
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.35159534
+    Accumulated probability:   0.00000007
+    state mult  level   probability 
+    1     1     1       0.00000007
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 97        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       98  Ekin =           0.0616522334381661 au T =   865.26 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000007053834125           0.9999992946166003        -302.8892652239405265        -302.7722454582903424        -302.7722454582903424
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.35016423
+    Accumulated probability:   0.00000004
+    state mult  level   probability 
+    1     1     1       0.00000004
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 98        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:       99  Ekin =           0.0745037321345026 au T =  1045.62 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000004245964661           0.9999995754035353        -302.9021637030418219        -302.7854205607762879        -302.7854205607762879
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.74397027
+    Accumulated probability:   0.00000005
+    state mult  level   probability 
+    1     1     1       0.00000005
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 99        
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      100  Ekin =           0.0842018840086687 au T =  1181.73 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000002419629488           0.9999997580370632        -302.9115253574133817        -302.7952609253921992        -302.7952609253921992
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.95599991
+    Accumulated probability:   0.00000002
+    state mult  level   probability 
+    1     1     1       0.00000002
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 100       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      101  Ekin =           0.0881207331518527 au T =  1236.73 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000400757918           0.9999999599242066        -302.9152661136376423        -302.7991522490186185        -302.7991522490186185
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.08336922
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 101       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      102  Ekin =           0.0862024532336245 au T =  1209.80 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000000000000           1.0000000000000000        -302.9132443639939538        -302.7970967839274863        -302.7970967839274863
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.18797408
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 102       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      103  Ekin =           0.0799693508833876 au T =  1122.33 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000000266779802           0.9999999733220193        -302.9066587395482770        -302.7907428164243129        -302.7907428164243129
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.09786291
+    Accumulated probability:   0.00000001
+    state mult  level   probability 
+    1     1     1       0.00000001
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 103       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      104  Ekin =           0.0711853138328720 au T =   999.05 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000001934534344           0.9999998065465689        -302.8971367888473765        -302.7818690071562173        -302.7818690071562173
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.84618706
+    Accumulated probability:   0.00000004
+    state mult  level   probability 
+    1     1     1       0.00000004
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 104       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      105  Ekin =           0.0614278622190302 au T =   862.11 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000005895984891           0.9999994104015286        -302.8863394659648520        -302.7720115946092392        -302.7720115946092392
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.62541342
+    Accumulated probability:   0.00000008
+    state mult  level   probability 
+    1     1     1       0.00000008
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 105       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      106  Ekin =           0.0524695144651405 au T =   736.38 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000010029524626           0.9999989970475553        -302.8761141724399408        -302.7629121762327600        -302.7629121762327600
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.68335193
+    Accumulated probability:   0.00000010
+    state mult  level   probability 
+    1     1     1       0.00000010
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 106       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      107  Ekin =           0.0465478403294275 au T =   653.27 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000009845587772           0.9999990154411762        -302.8687648955566374        -302.7568466659436694        -302.7568466659436694
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.02952212
+    Accumulated probability:   0.00000006
+    state mult  level   probability 
+    1     1     1       0.00000006
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 107       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      108  Ekin =           0.0457805745180767 au T =   642.51 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000006124773666           0.9999993875226210        -302.8664967500613443        -302.7560246674980249        -302.7560246674980249
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.85798264
+    Accumulated probability:   0.00000003
+    state mult  level   probability 
+    1     1     1       0.00000003
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 108       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      109  Ekin =           0.0509081318924651 au T =   714.47 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000003356193049           0.9999996643806810        -302.8700822505236943        -302.7612538350641103        -302.7612538350641103
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.95120209
+    Accumulated probability:   0.00000002
+    state mult  level   probability 
+    1     1     1       0.00000002
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 109       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      110  Ekin =           0.0603890806080053 au T =   847.53 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000002574347197           0.9999997425652793        -302.8779556407488371        -302.7709747243254128        -302.7709747243254128
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.89010882
+    Accumulated probability:   0.00000002
+    state mult  level   probability 
+    1     1     1       0.00000002
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 110       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      111  Ekin =           0.0707153548679270 au T =   992.45 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000003249644588           0.9999996750355535        -302.8867290703774984        -302.7815775294814671        -302.7815775294814671
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.30148411
+    Accumulated probability:   0.00000004
+    state mult  level   probability 
+    1     1     1       0.00000004
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 111       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      112  Ekin =           0.0777985077035966 au T =  1091.86 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000005704890313           0.9999994295109786        -302.8926497543031928        -302.7888849083885816        -302.7888849083885816
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.97268766
+    Accumulated probability:   0.00000008
+    state mult  level   probability 
+    1     1     1       0.00000008
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 112       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      113  Ekin =           0.0783352459912082 au T =  1099.39 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000008486719571           0.9999991513280406        -302.8925363397835895        -302.7895534462134037        -302.7895534462134037
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.28851548
+    Accumulated probability:   0.00000010
+    state mult  level   probability 
+    1     1     1       0.00000010
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 113       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      114  Ekin =           0.0708235253929717 au T =   993.97 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000008442056837           0.9999991557943417        -302.8842613393778151        -302.7819788273913559        -302.7819788273913559
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.42250419
+    Accumulated probability:   0.00000007
+    state mult  level   probability 
+    1     1     1       0.00000007
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 114       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      115  Ekin =           0.0569777887887848 au T =   799.65 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000009064999486           0.9999990935000369        -302.8686310193602367        -302.7677808958994206        -302.7677808958994206
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.53530622
+    Accumulated probability:   0.00000009
+    state mult  level   probability 
+    1     1     1       0.00000009
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 115       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      116  Ekin =           0.0424903970967538 au T =   596.33 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000016109672411           0.9999983890327258        -302.8516089098770294        -302.7527943409133400        -302.7527943409133400
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.27520338
+    Accumulated probability:   0.00000015
+    state mult  level   probability 
+    1     1     1       0.00000015
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 116       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      117  Ekin =           0.0348053058156753 au T =   488.47 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000017280899067           0.9999982719100444        -302.8419690614221622        -302.7448119500201642        -302.7448119500201642
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.99262416
+    Accumulated probability:   0.00000004
+    state mult  level   probability 
+    1     1     1       0.00000004
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 117       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      118  Ekin =           0.0381166345330008 au T =   534.95 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000006123102423           0.9999993876897406        -302.8449036910495238        -302.7482969648438598        -302.7482969648438598
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.11886731
+    Accumulated probability:   0.00000004
+    state mult  level   probability 
+    1     1     1       0.00000004
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 118       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      119  Ekin =           0.0501835544267181 au T =   704.30 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000055204928940           0.9999944795072224        -302.8576309323148621        -302.7607623980144353        -302.7607623980144353
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.26407012
+    Accumulated probability:   0.00000094
+    state mult  level   probability 
+    1     1     1       0.00000094
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 119       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      120  Ekin =           0.0650979278090858 au T =   913.61 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000212959793364           0.9999787040214869        -302.8724804763541556        -302.7759684944520018        -302.7759684944520018
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.55418509
+    Accumulated probability:   0.00000308
+    state mult  level   probability 
+    1     1     1       0.00000308
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 120       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      121  Ekin =           0.0777293928524875 au T =  1090.89 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000536497511500           0.9999463502499566        -302.8836070674626626        -302.7887530629039929        -302.7887530629039929
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.08889475
+    Accumulated probability:   0.00000757
+    state mult  level   probability 
+    1     1     1       0.00000757
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 121       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      122  Ekin =           0.0851376945249807 au T =  1194.86 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0001097233514745           0.9998902766456013        -302.8886212633619834        -302.7961920964905289        -302.7961920964905289
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.46247602
+    Accumulated probability:   0.00001435
+    state mult  level   probability 
+    1     1     1       0.00001435
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 122       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      123  Ekin =           0.0865201420848154 au T =  1214.26 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0001728642349120           0.9998271357617341        -302.8872125651815850        -302.7974774069008390        -302.7974774069008390
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.66509807
+    Accumulated probability:   0.00001935
+    state mult  level   probability 
+    1     1     1       0.00001935
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 123       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      124  Ekin =           0.0828796446039262 au T =  1163.17 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0002176000701783           0.9997823999292450        -302.8803725720481452        -302.7936951152938718        -302.7936951152938718
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.72319037
+    Accumulated probability:   0.00002072
+    state mult  level   probability 
+    1     1     1       0.00002072
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 124       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      125  Ekin =           0.0761039026168012 au T =  1068.08 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0002432295105091           0.9997567704849644        -302.8699280142755583        -302.7867884530001561        -302.7867884530001561
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.28816304
+    Accumulated probability:   0.00002000
+    state mult  level   probability 
+    1     1     1       0.00002000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 125       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      126  Ekin =           0.0682673312450852 au T =   958.09 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0002505547693885           0.9997494452400133        -302.8581166263365958        -302.7788203628750807        -302.7788203628750807
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.45616731
+    Accumulated probability:   0.00001700
+    state mult  level   probability 
+    1     1     1       0.00001700
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 126       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      127  Ekin =           0.0615413109310863 au T =   863.70 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0002260384135201           0.9997739615937462        -302.8473853136597995        -302.7719678058782051        -302.7719678058782051
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.32674804
+    Accumulated probability:   0.00001160
+    state mult  level   probability 
+    1     1     1       0.00001160
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 127       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      128  Ekin =           0.0578981936333469 au T =   812.57 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0001681999677515           0.9998318000289146        -302.8400189642050009        -302.7682624541670862        -302.7682624541670862
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.89472365
+    Accumulated probability:   0.00000597
+    state mult  level   probability 
+    1     1     1       0.00000597
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 128       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      129  Ekin =           0.0583823138695655 au T =   819.36 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0001003701886665           0.9998996298090788        -302.8374316639245762        -302.7687684358704132        -302.7687684358704132
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.69428796
+    Accumulated probability:   0.00000227
+    state mult  level   probability 
+    1     1     1       0.00000227
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 129       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      130  Ekin =           0.0627488690016554 au T =   880.65 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000489609284539           0.9999510390698561        -302.8397270038375950        -302.7732169739144297        -302.7732169739144297
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.43401635
+    Accumulated probability:   0.00000075
+    state mult  level   probability 
+    1     1     1       0.00000075
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 130       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      131  Ekin =           0.0697952393131864 au T =   979.54 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000189764062016           0.9999810235931363        -302.8457373277095144        -302.7803609856590015        -302.7803609856590015
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.33302259
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 131       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      132  Ekin =           0.0778687405104538 au T =  1092.84 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000083757393419           0.9999916242604741        -302.8534400891758764        -302.7885656482013701        -302.7885656482013701
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.58775663
+    Accumulated probability:   0.00000099
+    state mult  level   probability 
+    1     1     1       0.00000099
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 132       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      133  Ekin =           0.0846934080380595 au T =  1188.63 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000882856253449           0.9999117143743206        -302.8601722422220632        -302.7956363977164074        -302.7956363977164074
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.06177155
+    Accumulated probability:   0.00001507
+    state mult  level   probability 
+    1     1     1       0.00001507
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 133       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      134  Ekin =           0.0868846904438277 au T =  1219.38 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0004477035713999           0.9995522964163683        -302.8625444977697612        -302.7981021159949933        -302.7981021159949933
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.42791376
+    Accumulated probability:   0.00005948
+    state mult  level   probability 
+    1     1     1       0.00005948
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 134       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      135  Ekin =           0.0814193924474709 au T =  1142.68 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0013672807075850           0.9986327192746103        -302.8575197327343176        -302.7926446718537932        -302.7926446718537932
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.14154325
+    Accumulated probability:   0.00015428
+    state mult  level   probability 
+    1     1     1       0.00015428
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 135       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      136  Ekin =           0.0690314287652468 au T =   968.82 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0029522605369148           0.9970477395690978        -302.8449319906917481        -302.7798753799484075        -302.7798753799484075
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.97955632
+    Accumulated probability:   0.00025838
+    state mult  level   probability 
+    1     1     1       0.00025838
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 136       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      137  Ekin =           0.0556432667766151 au T =   780.92 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0039949113477941           0.9960050885565579        -302.8294221424658303        -302.7659804044465659        -302.7659804044465659
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.64919794
+    Accumulated probability:   0.00019187
+    state mult  level   probability 
+    1     1     1       0.00019187
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 137       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      138  Ekin =           0.0484844038669972 au T =   680.45 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0029969934422537           0.9970030065160245        -302.8182308581446591        -302.7586415523304026        -302.7586415523304026
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.07113185
+    Accumulated probability:   0.00002751
+    state mult  level   probability 
+    1     1     1       0.00002751
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 138       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      139  Ekin =           0.0505234678239686 au T =   709.07 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0012146527987290           0.9987853472121060        -302.8151778091665847        -302.7608660413695816        -302.7608660413695816
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.42328393
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 139       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      140  Ekin =           0.0591452189412012 au T =   830.07 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0002785497020515           0.9997214502946008        -302.8186256725881549        -302.7698640125327074        -302.7698640125327074
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.29272100
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 140       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      141  Ekin =           0.0688108094419369 au T =   965.72 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000708746924892           0.9999291253043339        -302.8242851511975573        -302.7798002143283043        -302.7798002143283043
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.37794852
+    Accumulated probability:   0.00000107
+    state mult  level   probability 
+    1     1     1       0.00000107
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 141       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      142  Ekin =           0.0750765723920413 au T =  1053.66 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000608614683570           0.9999391385317722        -302.8287376645677114        -302.7861026647670428        -302.7861026647670428
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.74245119
+    Accumulated probability:   0.00000244
+    state mult  level   probability 
+    1     1     1       0.00000244
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 142       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      143  Ekin =           0.0765912350251459 au T =  1074.92 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0000395189111568           0.9999604810873279        -302.8301464965559262        -302.7875208484165910        -302.7875208484165910
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.19201882
+    Accumulated probability:   0.00000627
+    state mult  level   probability 
+    1     1     1       0.00000627
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 143       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      144  Ekin =           0.0741146392686437 au T =  1040.16 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0010152759910424           0.9989847240503877        -302.8280941712545768        -302.7849412851256830        -302.7849412851256830
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.49512860
+    Accumulated probability:   0.00016772
+    state mult  level   probability 
+    1     1     1       0.00016772
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 144       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      145  Ekin =           0.0690130389332281 au T =   968.56 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0075072756410491           0.9924927242100239        -302.8232731851697395        -302.7797293615557805        -302.7797293615557805
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.87795329
+    Accumulated probability:   0.00089515
+    state mult  level   probability 
+    1     1     1       0.00089515
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 145       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      146  Ekin =           0.0629797659846958 au T =   883.89 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0283397297794345           0.9716602694243193        -302.8171779214933395        -302.7735522426315242        -302.7735522426315242
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.10229146
+    Accumulated probability:   0.00267430
+    state mult  level   probability 
+    1     1     1       0.00267430
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 146       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      147  Ekin =           0.0581773287918868 au T =   816.49 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.0717596329772889           0.9282403662800789        -302.8118211131171620        -302.7686040006581720        -302.7686040006581720
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.01412730
+    Accumulated probability:   0.00562592
+    state mult  level   probability 
+    1     1     1       0.00562592
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 147       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      148  Ekin =           0.0567027474799434 au T =   795.79 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.1372836673508394           0.8627163320779800        -302.8091074605911786        -302.7670546837714483        -302.7670546837714483
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.20977394
+    Accumulated probability:   0.00947170
+    state mult  level   probability 
+    1     1     1       0.00947170
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 148       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      149  Ekin =           0.0596643056143602 au T =   837.36 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.2152441816072600           0.7847558110952377        -302.8100213095120807        -302.7700333429296506        -302.7700333429296506
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.63045913
+    Accumulated probability:   0.01403084
+    state mult  level   probability 
+    1     1     1       0.01403084
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 149       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      150  Ekin =           0.0667806511076125 au T =   937.23 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.2962322005982663           0.7037678062915802        -302.8142460481599869        -302.7772527397154363        -302.7772527397154363
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.64641392
+    Accumulated probability:   0.01931925
+    state mult  level   probability 
+    1     1     1       0.01931925
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 150       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      151  Ekin =           0.0764266857656523 au T =  1072.61 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.3691937286413381           0.6308062672615051        -302.8202299628065362        -302.7870859830125596        -302.7870859830125596
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   2
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.60569799
+    Accumulated probability:   0.02301267
+    state mult  level   probability 
+    1     1     1       0.02301267
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 151       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      152  Ekin =           0.0857972367077368 au T =  1204.12 K dt =         20 CI:   2
+  Root chosen for geometry opt   2
+
+  Gnuplot:           0.6014095544815063           0.3985904530201802        -302.8254387347689089        -302.7967017767896891        -302.7967017767896891
+  **
+  **
+  **
+  A surface hopping event happened
+  **
+  From state:   2 to state:   1 *
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.01293115
+    Accumulated probability:   0.02229227
+    state mult  level   probability 
+    1     1     1       0.02229227
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 152       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      153  Ekin =           0.1155889000536005 au T =  1622.23 K dt =         20 CI:   2
+  Root chosen for geometry opt   1
+
+  Gnuplot:           0.2175555825233459           0.7824444233730488        -302.8249097912979551        -302.7984076246365248        -302.8249097912979551
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   1
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.00783199
+    Accumulated probability:   0.07812393
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.07812394
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 153       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      154  Ekin =           0.1100110364144725 au T =  1543.94 K dt =         20 CI:   2
+  Root chosen for geometry opt   1
+
+  Gnuplot:           0.5196425020694733           0.4803574904877321        -302.8191533791210190        -302.7924016898714399        -302.8191533791210190
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   1
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.65223861
+    Accumulated probability:   0.00000000
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.00000000
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 154       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      155  Ekin =           0.1028054921714792 au T =  1442.82 K dt =         20 CI:   2
+  Root chosen for geometry opt   1
+
+  Gnuplot:           0.3521784543991089           0.6478215447283795        -302.8116063850819160        -302.7818293433128929        -302.8116063850819160
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   1
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.00897499
+    Accumulated probability:   0.10436400
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       0.10436400
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 155       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+  Iter:      156  Ekin =           0.0988479137459710 au T =  1387.28 K dt =         20 CI:   2
+  Root chosen for geometry opt   1
+
+  Gnuplot:                          nan                          nan        -302.8074354599782509        -302.7734177621105118        -302.8074354599782509
+  **
+  **
+  **
+  A surface hopping is not allowed
+  **
+  At state:   1
+
+
+  &surface hopping information
+-------------------------------------------------------
+
+    Random number:             0.66449690
+    Accumulated probability:   1.96700144
+    state mult  level   probability 
+    1     1     1       0.00000000
+    2     1     2       1.96700144
+
+    
+-------------------------------------------------------
+
+  
+  &error iter 156       
+-------------------------------------------------------
+  Energy   MaxStDev:          0.0000    
+  Gradient MaxStDev:          0.0000    
+  Nac      MaxStDev:          0.0000    
+  Soc      MaxStDev:          0.0000    
+-------------------------------------------------------
+
+Trajectory terminated because the state population is nan.
+Nonadiabatic Molecular Dynamics End:  2026-02-25 10:48:23 Total:     0 days     0 hours     0 minutes    47 seconds
