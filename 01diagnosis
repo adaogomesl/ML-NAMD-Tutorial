@@ -1,7 +1,0 @@
-      title      dbh
-      mode       diagnosis
-      read_index 1-5000
-      cpus       20
-      minstep    2000
- 
-
