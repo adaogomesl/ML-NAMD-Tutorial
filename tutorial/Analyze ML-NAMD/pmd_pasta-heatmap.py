@@ -119,6 +119,7 @@ plt.yticks(fontsize=15, weight='bold')
 ax.set_xlabel(r'Dihedral H-C-C-C (°)',color='blue',fontsize=14,labelpad=8)
 ax.set_ylabel(r'Dihedral H-C-C-C (°)',color='green',fontsize=14,labelpad=8)
 plt.savefig('DBH-Dihedral-Inversion.png',dpi=1400,bbox_inches='tight')
+plt.show()
 
 
 #D 15 2 3 5 D 4 1 2 3
