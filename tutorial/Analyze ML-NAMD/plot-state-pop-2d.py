@@ -8,7 +8,7 @@ import numpy as np
 import sys,json
 import matplotlib as mpl
 mpl.use('Agg')
-mpl.rc('font',family='Arial') ## might be commented out if now work
+#mpl.rc('font',family='Arial') ## might be commented out if now work
 
 title='dbh' # title of this figure
 
