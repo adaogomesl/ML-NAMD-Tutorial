@@ -1,4 +1,4 @@
-pimport jsonrin
+import json
 import io
 import os
 import matplotlib.pyplot as plt 
